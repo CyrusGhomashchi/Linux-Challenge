@@ -1,0 +1,92 @@
+mkdir lucky_duck_investigations
+
+cd lucky_duck_investigations
+mkdir roulette_loss_investigation
+
+cd roulette_loss_investigation
+mkdir player_analysis
+mkdir dealer_analysis
+mkdir player_dealer_correlation
+
+cd player_analysis
+touch notes_player_analysis
+
+cd dealer_analysis
+touch notes_dealer_analysis
+
+cd player_dealer_correlation
+touch notes_player_dealer_correlation
+
+cd ..
+cd ..
+ 
+# We should now be in the lucky_duck_investigations directory we we will run command to set up evidence files
+
+wget "https://drive.google.com/uc?id=1ZLY_fuFu3wz7tOlxf-GUrnvp3htuGKSa" -O 3-HW-setup-evidence && chmod +x ./3-HW-setup-evidence && ./3-HW-setup-evidence
+
+# dealer_schedules_0310, roulette_player_winloss_0310 are now inside lucky_duck_investigations
+
+cd dealer_schedules_0310
+mv /home/sysadmin/lucky_duck_investigations/dealer_schedules_0310/0310_dealer_schedule.txt /home/sysadmin/lucky_duck_investigations/roulette_loss_investigation/dealer_analysis
+mv /home/sysadmin/lucky_duck_investigations/dealer_schedules_0310/0312_dealer_schedule.txt /home/sysadmin/lucky_duck_investigations/roulette_loss_investigation/dealer_analysis
+mv /home/sysadmin/lucky_duck_investigations/dealer_schedules_0310/0315_dealer_schedule.txt /home/sysadmin/lucky_duck_investigations/roulette_loss_investigation/dealer_analysis
+
+cd ..
+cd roulette_player_winloss_0310
+mv /home/sysadmin/lucky_duck_investigations/roulette_player_winloss_0310/0310_win_loss_player_data_txt /home/sysadmin/lucky_duck_investigations/roulette_loss_investigation/player_analysis
+mv /home/sysadmin/lucky_duck_investigations/roulette_player_winloss_0310/0312_win_loss_player_data_txt /home/sysadmin/lucky_duck_investigations/roulette_loss_investigation/player_analysis
+mv /home/sysadmin/lucky_duck_investigations/roulette_player_winloss_0310/0315_win_loss_player_data_txt /home/sysadmin/lucky_duck_investigations/roulette_loss_investigation/player_analysis
+
+# I will navigate into player analysis directory, find all the losses and move them into a new file called roulette_losses
+cd /home/sysadmin/lucky_duck_investigations/roulette_loss_investigation/player_analysis/
+grep -i - * >> roulette_losses
+
+nano notes_player_analysis
+Determined Miley Schmidt was the player and was 13 losses.
+
+cat roulette_losses
+grep -i mylie roulette_losses
+grep -i mylie roulette_losses | wc -l
+
+cd ..
+cd dealer_analysis
+cat 0310_dealer_schedule.txt
+cat 0310_dealer_schedule.txt | grep -i billy
+cat 0310_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}'
+cat 0310_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '05:00:00 AM'
+cat 0310_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '05:00:00 AM' >> dealers_working_during_losses
+cat 0310_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '08:00:00 AM' >> dealers_working_during_losses
+cat 0310_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '02:00:00 PM' >> dealers_working_during_losses
+cat 0310_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '08:00:00 PM' >> dealers_working_during_losses
+cat 0310_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '11:00:00 PM' >> dealers_working_during_losses
+
+cat 0312_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '05:00:00 AM' >> dealers_working_during_losses
+cat 0312_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '08:00:00 AM' >> dealers_working_during_losses
+cat 0312_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '02:00:00 PM' >> dealers_working_during_losses
+cat 0312_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '08:00:00 PM' >> dealers_working_during_losses
+cat 0312_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '11:00:00 PM' >> dealers_working_during_losses
+
+cat 0315_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '05:00:00 AM' >> dealers_working_during_losses
+cat 0315_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '08:00:00 AM' >> dealers_working_during_losses
+cat 0315_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep '02:00:00 PM' >> dealers_working_during_losses
+
+cat dealers_working_during_losses       #Will see 05:00:00 AM Billy Jones
+
+nano notes_dealer_analysis
+The name of the dealer that worked with Mylie was Billy and they were present for the 13 losses across the 3 days.
+
+cd ..
+cd player_dealer_correlation
+nano notes_player_dealer_correlation
+It was determined that Mylie was the player and Billy was the dealer. They both worked together 13x across the 3 days.
+
+cd ..
+cd dealer_analysis
+nano roullete_dealer_finder_by_time.sh
+#!/bin/bash
+cat $1_dealer_schedule.txt | awk -F" " '{print $1, $2, $5, $6}' | grep "$2" 
+chmod +x roullete_dealer_finder_by_time.sh
+./roulette_dealer_finder_by_time.sh 0310 '08:00:00 AM'
+
+#this executes file into what will go into $1 and $2 (day and time) which will show Billy Jones
+
